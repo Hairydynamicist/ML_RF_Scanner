@@ -66,6 +66,7 @@ class SignalFeatureExtractor:
             extractor = SignalFeatureExtractor()
             for filename in files:
                 filepath = os.path.join(label_dir, filename)
+                data = safe_load_npy(filepath).item
                 # data = np.load(filepath, allow_pickle=True).item()
                 data = safe_load_npy(filepath).item() # replacing pickle=true line
                 samples = data['samples']
