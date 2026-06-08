@@ -75,86 +75,86 @@ class SignalFeatureExtractor:
 
         return np.array(X), np.array(y)
     
-    def main():
-        print("="*70)
-        print("TRAINING RF SIGNAL CLASSIFIER")
-        print("="*70)
+def main():
+    print("="*70)
+    print("TRAINING RF SIGNAL CLASSIFIER")
+    print("="*70)
 
-        X, y = load_dataset()
-        print(f"\nDataset: {len(X)} samples, {len(np.unique(y))} classes")
+    X, y = load_dataset()
+    print(f"\nDataset: {len(X)} samples, {len(np.unique(y))} classes")
 
-        # Temporal split: train on earlier captures, test on later ones
-        # Prevents same-moment correlation from inflating accuracy
-        X_train, X_test, y_train, y_test = [], [], [], []
-        for label in sorted(np.unique(y)):
-            mask = y == label
-            X_class = X[mask]
-            y_class = y[mask]
-            split_idx = int(len(X_class) * 0.8)
-            X_train.extend(X_class[:split_idx])
-            X_test.extend(X_class[split_idx:])
-            y_train.extend(y_class[:split_idx])
-            y_test.extend(y_class[split_idx:])
-            X_train, X_test = np.array(X_train), np.array(X_test)
-            y_train, y_test = np.array(y_train), np.array(y_test)
+    # Temporal split: train on earlier captures, test on later ones
+    # Prevents same-moment correlation from inflating accuracy
+    X_train, X_test, y_train, y_test = [], [], [], []
+    for label in sorted(np.unique(y)):
+        mask = y == label
+        X_class = X[mask]
+        y_class = y[mask]
+        split_idx = int(len(X_class) * 0.8)
+        X_train.extend(X_class[:split_idx])
+        X_test.extend(X_class[split_idx:])
+        y_train.extend(y_class[:split_idx])
+        y_test.extend(y_class[split_idx:])
+        X_train, X_test = np.array(X_train), np.array(X_test)
+        y_train, y_test = np.array(y_train), np.array(y_test)
 
-        scaler = StandardScaler()
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-            
-        models = {
-            'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-            'SVM': SVC(kernel='rbf', random_state=42),
-            'KNN': KNeighborsClassifier(n_neighbors=5)
-        }
-
-        best_model = None
-        best_score = 0
-        best_name = ""
-
-        for name, model in models.items():
-            print(f"\n{'='*70}")
-            print(f"{name}")
-            print(f"\n{'='*70}")
-
-        cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
-        print(f"Cross-validation: {cv_scores.mean():.3f} (+/- {cv_scores.std():.3f})")
-
-        model.fit(X_train_scaled, y_train)
-        train_score = model.score(X_train_scaled, y_train)
-        test_score = model.score(X_test_scaled, y_test)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
         
-        print(f"Training accuracy: {train_score:.3f}")
-        print(f"Test accuracy: {test_score:.3f}")
-        
-        if test_score > best_score:
-            best_score = test_score
-            best_model = model
-            best_name = name
-    
+    models = {
+        'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
+        'SVM': SVC(kernel='rbf', random_state=42),
+        'KNN': KNeighborsClassifier(n_neighbors=5)
+    }
+
+    best_model = None
+    best_score = 0
+    best_name = ""
+
+    for name, model in models.items():
         print(f"\n{'='*70}")
-        print(f"BEST MODEL: {best_name} ({best_score:.1%})")
-        print(f"{'='*70}")
+        print(f"{name}")
+        print(f"\n{'='*70}")
 
-        y_pred = best_model.predict(X_test_scaled)
-        print("\nClassification Report:")
-        print(classification_report(y_test, y_pred))
+    cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
+    print(f"Cross-validation: {cv_scores.mean():.3f} (+/- {cv_scores.std():.3f})")
 
-        print("\nConfusion Matrix:")
-        cm = confusion_matrix(y_test, y_pred)
-        classes = sorted(np.unique(y))
-        print(f"\n{' '*15}", end='')
-        for cls in classes:
-            print(f"{cls[:8]:>8}", end=' ')
+    model.fit(X_train_scaled, y_train)
+    train_score = model.score(X_train_scaled, y_train)
+    test_score = model.score(X_test_scaled, y_test)
+    
+    print(f"Training accuracy: {train_score:.3f}")
+    print(f"Test accuracy: {test_score:.3f}")
+    
+    if test_score > best_score:
+        best_score = test_score
+        best_model = model
+        best_name = name
+
+    print(f"\n{'='*70}")
+    print(f"BEST MODEL: {best_name} ({best_score:.1%})")
+    print(f"{'='*70}")
+
+    y_pred = best_model.predict(X_test_scaled)
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred))
+
+    print("\nConfusion Matrix:")
+    cm = confusion_matrix(y_test, y_pred)
+    classes = sorted(np.unique(y))
+    print(f"\n{' '*15}", end='')
+    for cls in classes:
+        print(f"{cls[:8]:>8}", end=' ')
+    print()
+    for i, cls in enumerate(classes):
+        print(f"{cls[:15]:>15}", end=' ')
+        for j in range(len(classes)):
+            print(f"{cm[i,j]:>8}", end=' ')
         print()
-        for i, cls in enumerate(classes):
-            print(f"{cls[:15]:>15}", end=' ')
-            for j in range(len(classes)):
-                print(f"{cm[i,j]:>8}", end=' ')
-            print()
 
-        print(f"\n✅ Model saved: rtl_classifier_validated.pkl")
-        print(f"✅ Accuracy: {best_score:.1%}")
+    print(f"\n✅ Model saved: rtl_classifier_validated.pkl")
+    print(f"✅ Accuracy: {best_score:.1%}")
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
