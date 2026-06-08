@@ -48,32 +48,32 @@ class SignalFeatureExtractor:
 
         return np.array(features)
     
-    def load_dataset(data_dir='data'):
-        X = []
-        y = []
+def load_dataset(data_dir='data'):
+    X = []
+    y = []
 
-        labels = sorted(os.listdir(data_dir))
-        print(f"loading {len(labels)} classes: {labels}")
+    labels = sorted(os.listdir(data_dir))
+    print(f"loading {len(labels)} classes: {labels}")
 
-        for label in labels:
-            label_dir = os.path.join(data_dir, label)
-            if not os.path.isdir(label_dir):
-                continue
+    for label in labels:
+        label_dir = os.path.join(data_dir, label)
+        if not os.path.isdir(label_dir):
+            continue
 
-            files = [f for f in os.listdir(label_dir) if f.endswith('.npy')]
-            print(f"    {label}: {len(files)} samples")
+        files = [f for f in os.listdir(label_dir) if f.endswith('.npy')]
+        print(f"    {label}: {len(files)} samples")
 
-            extractor = SignalFeatureExtractor()
-            for filename in files:
-                filepath = os.path.join(label_dir, filename)
-                # data = np.load(filepath, allow_pickle=True).item()
-                data = safe_load_npy(filepath).item() # replacing np.load
-                samples = data['samples']
-                features = extractor.extract_features(samples)
-                X.append(features)
-                y.append(label)
+        extractor = SignalFeatureExtractor()
+        for filename in files:
+            filepath = os.path.join(label_dir, filename)
+            # data = np.load(filepath, allow_pickle=True).item()
+            data = safe_load_npy(filepath).item() # replacing np.load
+            samples = data['samples']
+            features = extractor.extract_features(samples)
+            X.append(features)
+            y.append(label)
 
-        return np.array(X), np.array(y)
+    return np.array(X), np.array(y)
     
 def main():
     print("="*70)
