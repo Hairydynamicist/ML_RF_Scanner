@@ -17,6 +17,7 @@ import pickle
 import struct
 from pathlib import Path
 from typing import Union
+import os #debug
 
 import numpy as np
 from numpy._core.multiarray import _reconstruct, scalar
@@ -67,6 +68,13 @@ def _descr_uses_pickle(descr):
 def safe_load_npy(path: Union[str, Path]) -> np.ndarray:
     """Load a .npy file. Object dtype goes through an allowlist-restricted unpickler."""
     path = str(path)
+    
+    print("cwd:", os.getcwd()) # debug
+    print("path repr:", repr(path)) # debug
+    print("abspath:", os.path.abspath(path)) # debug
+    print("exists:", os.path.exists(path)) # debug
+    print("isfile:", os.path.isfile(path)) # debug
+
     with open(path, "rb") as fh:
         meta = _parse_npy_header(fh)
         if not _descr_uses_pickle(meta.get("descr")):
