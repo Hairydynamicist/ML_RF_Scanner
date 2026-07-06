@@ -9,6 +9,7 @@ from safe_npy_load import safe_load_npy
 from pathlib import Path
 import os
 import joblib
+import datetime
 
 # Pinned to a specific HF snapshot for reproducibility and
 # to prevent accidental training against modified datasets.
@@ -179,9 +180,12 @@ def main():
     
     joblib.dump(
         {
-            'model': best_model,
-            'scaler': scaler,
-            'model_name': best_name
+        'model': best_model,
+        'scaler': scaler,
+        'model_name': best_name,
+        'training_date': str(datetime.now()),
+        'dataset_snapshot': str(PINNED_DATASET_SNAPSHOT),
+        'classes': sorted(np.unique(y))
         },
         'rtl_classifier_validated.joblib'
     )
