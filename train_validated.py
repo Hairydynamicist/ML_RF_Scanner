@@ -7,9 +7,9 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
 from safe_npy_load import safe_load_npy
 from pathlib import Path
+from datetime import datetime
 import os
 import joblib
-import datetime
 
 # Pinned to a specific HF snapshot for reproducibility and
 # to prevent accidental training against modified datasets.
