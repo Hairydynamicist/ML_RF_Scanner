@@ -8,6 +8,19 @@ from sklearn.metrics import classification_report, confusion_matrix
 from safe_npy_load import safe_load_npy
 import os
 
+# Pinned to a specific HF snapshot for reproducibility and
+# to prevent accidental training against modified datasets.
+PINNED_DATASET_SNAPSHOT = (
+    "/home/jmurray/.cache/huggingface/hub/"
+    "datasets--TrevTron--rtl-ml-dataset/"
+    "snapshots/"
+    "8287277741055f51a6eb16d941b3069c8daa3cda/"
+    "datasets_validated"
+)
+
+def load_dataset(data_dir=PINNED_DATASET_SNAPSHOT):
+    ...
+
 #Create a class that extracts the features that we'll use to classify the different signals.
 
 class SignalFeatureExtractor:
@@ -48,7 +61,7 @@ class SignalFeatureExtractor:
 
         return np.array(features)
     
-def load_dataset(data_dir='data'):
+def load_dataset(data_dir='/home/jmurray/.cache/huggingface/hub/datasets--TrevTron--rtl-ml-dataset/snapshots/8287277741055f51a6eb16d941b3069c8daa3cda/datasets_validated'):
     X = []
     y = []
 
