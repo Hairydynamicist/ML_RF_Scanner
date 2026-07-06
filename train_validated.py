@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report, confusion_matrix
 from safe_npy_load import safe_load_npy
+from pathlib import Path
 import os
 
 # Pinned to a specific HF snapshot for reproducibility and
@@ -61,7 +62,14 @@ class SignalFeatureExtractor:
 
         return np.array(features)
     
-def load_dataset(data_dir='/home/jmurray/.cache/huggingface/hub/datasets--TrevTron--rtl-ml-dataset/snapshots/8287277741055f51a6eb16d941b3069c8daa3cda/datasets_validated'):
+def load_dataset(data_dir=PINNED_DATASET_SNAPSHOT):
+    data_dir = Path(data_dir)
+    
+    if not data_dir.exists():
+        raise FileNotFoundError(
+            f"Pinned dataset snapshot not found: {data_dir}"
+        )
+
     X = []
     y = []
 
