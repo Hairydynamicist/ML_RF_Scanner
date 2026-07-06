@@ -116,8 +116,9 @@ def main():
         X_test.extend(X_class[split_idx:])
         y_train.extend(y_class[:split_idx])
         y_test.extend(y_class[split_idx:])
-        X_train, X_test = np.array(X_train), np.array(X_test)
-        y_train, y_test = np.array(y_train), np.array(y_test)
+    # Convert to NumPy arrays only after all classes have been processed
+    X_train, X_test = np.array(X_train), np.array(X_test)
+    y_train, y_test = np.array(y_train), np.array(y_test)
 
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
