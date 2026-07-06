@@ -8,6 +8,7 @@ from sklearn.metrics import classification_report, confusion_matrix
 from safe_npy_load import safe_load_npy
 from pathlib import Path
 import os
+import joblib
 
 # Pinned to a specific HF snapshot for reproducibility and
 # to prevent accidental training against modified datasets.
@@ -175,7 +176,17 @@ def main():
             print(f"{cm[i,j]:>8}", end=' ')
         print()
 
-    print(f"\n✅ Model saved: rtl_classifier_validated.pkl")
+    
+    joblib.dump(
+        {
+            'model': best_model,
+            'scaler': scaler,
+            'model_name': best_name
+        },
+        'rtl_classifier_validated.joblib'
+    )
+
+    print(f"\n✅ Model saved: rtl_classifier_validated.joblib")
     print(f"✅ Accuracy: {best_score:.1%}")
 
 if __name__ == '__main__':
