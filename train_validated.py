@@ -141,20 +141,20 @@ def main():
         print(f"{name}")
         print(f"\n{'='*70}")
 
-    cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
-    print(f"Cross-validation: {cv_scores.mean():.3f} (+/- {cv_scores.std():.3f})")
+        cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
+        print(f"Cross-validation: {cv_scores.mean():.3f} (+/- {cv_scores.std():.3f})")
 
-    model.fit(X_train_scaled, y_train)
-    train_score = model.score(X_train_scaled, y_train)
-    test_score = model.score(X_test_scaled, y_test)
-    
-    print(f"Training accuracy: {train_score:.3f}")
-    print(f"Test accuracy: {test_score:.3f}")
-    
-    if test_score > best_score:
-        best_score = test_score
-        best_model = model
-        best_name = name
+        model.fit(X_train_scaled, y_train)
+        train_score = model.score(X_train_scaled, y_train)
+        test_score = model.score(X_test_scaled, y_test)
+        
+        print(f"Training accuracy: {train_score:.3f}")
+        print(f"Test accuracy: {test_score:.3f}")
+        
+        if test_score > best_score:
+            best_score = test_score
+            best_model = model
+            best_name = name
 
     print(f"\n{'='*70}")
     print(f"BEST MODEL: {best_name} ({best_score:.1%})")
