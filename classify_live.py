@@ -55,9 +55,9 @@ def load_model(model_path=None):
     if model_path is None:
         # Search common locations
         candidates = [
-            'models/rtl_classifier_validated.pkl',
-            'rtl_classifier_validated.pkl',
-            os.path.join(os.path.dirname(__file__), '..', 'models', 'rtl_classifier_validated.pkl'),
+            'models/rtl_classifier_validated.joblib',
+            'rtl_classifier_validated.joblib',
+            os.path.join(os.path.dirname(__file__), '..', 'models', 'rtl_classifier_validated.joblib'),
         ]
         for path in candidates:
             if os.path.exists(path):
@@ -65,7 +65,7 @@ def load_model(model_path=None):
                 break
         else:
             raise FileNotFoundError(
-                "Model not found. Expected at models/rtl_classifier_validated.pkl\n"
+                "Model not found. Expected at models/rtl_classifier_validated.joblib\n"
                 "Train one with: python src/train_validated.py"
             )
 
@@ -79,7 +79,7 @@ def classify_signal(frequency, model_path=None, duration=0.5, sdr=None):
 
     Args:
         frequency: Center frequency in Hz (e.g. 98.7e6)
-        model_path: Path to .pkl model file (auto-detected if None)
+        model_path: Path to .joblib model file (auto-detected if None)
         duration: Capture duration in seconds
         sdr: Existing RtlSdr instance (opens new one if None)
 
@@ -126,7 +126,7 @@ def classify_signal(frequency, model_path=None, duration=0.5, sdr=None):
 def main():
     parser = argparse.ArgumentParser(description='RTL-ML Live Signal Classifier')
     parser.add_argument('--freq', type=float, help='Single frequency to classify (Hz, e.g. 98.7e6)')
-    parser.add_argument('--model', type=str, default=None, help='Path to model .pkl file')
+    parser.add_argument('--model', type=str, default=None, help='Path to model .joblib file')
     args = parser.parse_args()
 
     print("=" * 60)
